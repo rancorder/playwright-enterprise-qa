@@ -1,0 +1,42 @@
+{
+  "name": "playwright-enterprise-qa",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Playwright QA Automation Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:e2e": "playwright test tests/e2e",
+    "test:api": "playwright test tests/api",
+    "test:visual": "playwright test tests/visual",
+    "test:parallel": "playwright test --workers=4",
+    "report": "playwright show-report",
+    "report:allure": "allure generate allure-results --clean && allure open",
+    "docker:build": "docker-compose build",
+    "docker:test": "docker-compose up --abort-on-container-exit",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "playwright",
+    "qa",
+    "automation",
+    "testing",
+    "e2e",
+    "enterprise"
+  ],
+  "author": "rancorder",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "allure-playwright": "^2.10.0",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "winston": "^3.11.0"
+  }
+}

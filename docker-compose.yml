@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Playwright テスト実行環境
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.40.0-focal
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CI=true
+      - BASE_URL=${BASE_URL:-https://demo.playwright.dev}
+      - API_BASE_URL=${API_BASE_URL:-https://api.demo.playwright.dev}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - USER_EMAIL=${USER_EMAIL}
+      - USER_PASSWORD=${USER_PASSWORD}
+    command: >
+      sh -c "
+        npm ci &&
+        npx playwright test --workers=2
+      "
+    networks:
+      - test-network
+
+  # Allure レポート生成
+  allure:
+    image: frankescobar/allure-docker-service:2.21.0
+    ports:
+      - "5050:5050"
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 3
+      KEEP_HISTORY: 1
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/allure-report
+    networks:
+      - test-network
+
+  # テスト用モックサーバー（必要に応じて）
+  mock-server:
+    image: mockserver/mockserver:latest
+    ports:
+      - "1080:1080"
+    environment:
+      MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/initializerJson.json
+    volumes:
+      - ./mock-config:/config
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  node_modules:
